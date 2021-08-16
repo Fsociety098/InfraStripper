@@ -289,7 +289,6 @@ def removeExcess():
     else:
         fileopen = open(file, 'r+')
         doc = etree.parse(file)
-        write = open('testwrite.nessus', 'a')
         
 
         for severity in (doc.xpath('//ReportItem')):
