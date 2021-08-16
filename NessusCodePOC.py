@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import ipaddress
 from os import remove, write
-from typing import OrderedDict, Text
+from typing import OrderedDict
 from lxml import etree
 from socket import inet_aton
 import struct
@@ -217,23 +217,27 @@ def stripservices():
     doc = etree.parse(file)
     lst = doc.xpath('//ReportHost')
 
+    #Gets IP addresses from each Item and appends to sortedIP. Sorts IP addresses.
     for i in lst:
         sorted_ips.append(i.xpath('@name')[0])
         sorted_ips.sort(reverse=True)
     fileopen.close
 
-
+    #Sorts IP addresses 
     for sort in sorted_ips:
 
         try:
+            #Gets IP address version
             if ipaddress.ip_address(sort).version:
                 value = '0'
+                #Removes IP addresses without a value
                 while value in sorted_ips:
                     sorted_ips.remove(value)
+            #Sorts IP address
             sorted_ips = sorted(sorted_ips, key=lambda ip: struct.unpack("!L", inet_aton(ip))[0])
 
         except ValueError:
-            
+            #If IP address cannot be sorted (i.e not IPV4/6) removes item, adds to new list and sorts the hostnames into order.clet
             index = sorted_ips.index(sort)
             sorted_ips.remove(sort)
             sorted_ips.insert(index, '0')
@@ -241,23 +245,23 @@ def stripservices():
     
     hostnames.sort()
 
+    #adds hostnames to the bottom of IP addresses
     for host in hostnames:
         sorted_ips.append(host)
-
-
+    #Gets Report Host from IP address in list
     for ip in sorted_ips:
         ports = {}
-        services = []
         path_ = '//ReportHost[@name="'+ip+'"]'
         path2 = './/ReportItem'
 
         host = doc.xpath(path_)[0]
         hostpath = host.xpath(path2)
-        
+        #Gets Port from nessus file and gets the plugin.
         for it in hostpath:
             port = it.xpath('@port')[0]
             getservice = (it.xpath('@pluginFamily')[0])
             port = int(port)
+            #Port is not in ports and port doesnt equal 0 adds port to dictionary with blank secondary value
             portlist =  port not in ports
             if portlist == True:
                 if port != 0:
