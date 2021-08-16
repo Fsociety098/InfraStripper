@@ -372,7 +372,23 @@ def stripservices():
                         ports[port] = ''
                 # if service is 'service detection' get svc_name from xml 
                 if getservice == 'Service detection':
-                        ports[port] = (it.xpath('@svc_name')[0])
+                    ports[port] = (it.xpath('@svc_name')[0])
+                service =  port
+                match service:
+                    case 443:
+                        ports[port] = 'HTTPS'
+                    case 80:
+                        ports[port] = 'HTTP'
+                    case 8443:
+                        ports[port] = 'HTTPS'
+                    case 500:
+                        ports[port] = 'ISAKMP/IKE'
+                    case 5061:
+                        ports[port] = 'sip-tls'
+                    case 6801:
+                        ports[port] = 'ACNET'
+                    case 53:
+                        ports[port] = 'DNS'
     
 
             port_sort = sorted(ports.items(), key=lambda x: x[0])    
@@ -381,7 +397,7 @@ def stripservices():
 
             if len(port_sort) != 0:
                 for key, value in ports_sorted.items():
-                    print (ip + "\t|\t" + str(value) + "\t|\t" + str(key))
+                    print (ip + "\t|\t" + str(value) +"\t" + "|\t" + str(key))
                 print("\n")
         askuser(options)
 
