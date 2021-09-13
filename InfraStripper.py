@@ -76,17 +76,18 @@ XX                                                                          XX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 '''
 print(hacker)
-print("\n============ InfraStripper: Nessus File Parser v0.0.1  ============\n")
+print("\n============ InfraStripper: Nessus File Parser v0.5.0  ============\n")
 
 
 options = {}
-options['help'] = 'help'
+options['help'] = 'Help'
 options['Upload File Path'] = 'Upload File Path'
 options['Nessus Target Ripper'] = 'Nessus Target Ripper'
 options['Nessus Target Hostname'] = 'Nessus Target Hostname'
 options['Nessus Target Port'] = 'Nessus Target Port'
 options['Nessus Remove from Export'] = 'Nessus Remove from Export'
 options['Strip Services'] = 'Strip Services'
+options['Export to Excel Report'] = 'Export to Excel Report'
 options['Exit'] = 'Exit'
 
 
@@ -101,8 +102,12 @@ def help():
             print(
                 "   option 5                      - For each host outputs the ports running")
             print(
-                "   option 6                      - For each service running outputs the service running (WIP)")
-            print("   option 7                      - Exits the program")
+                "   option 6                      - Removes from Export ")
+            print(
+                "   option 7                      - For each service running outputs the service running ")
+            print(
+                "   option 8                    - Exports to excel formatted report ")
+            print("   option 9                      - Exits the program")
             print('\n')
             askuser(options)
 
