@@ -6,7 +6,8 @@ from lxml import etree
 import ipaddress
 import struct
 from socket import inet_aton
-
+import tkinter as tk
+from tkinter import filedialog
 from xlsxwriter import workbook
 
 
@@ -152,11 +153,15 @@ def parse_nessus_file(file):
                         cvss_scores[temp_severity]['cvss_base_score'] + base_score, 2)
 
                 if it2.xpath('cvss_temporal_score/text()') != []:
-                    t_base_score = it2.xpath('cvss_temporal_score/text()')
+                    t_base_score = it2.xpath('cvss_temporal_score/text()')[0]
                     t_base_score = round(float(t_base_score), 2)
-                    t_temp_severity = it2.xpath('severity')[0]
-                    t_temp_severity = int(t_temp_severity)
-                    cvss_scores[t_temp_severity]['cvss_temporal_score'] = round(
+                    t_temp_severity = it2.xpath('severity')
+                    if t_temp_severity == []:
+                        break
+                    else:
+                        t_temp_severity = it2.xpath('severity')[0]
+                        t_temp_severity = int(t_temp_severity)
+                        cvss_scores[t_temp_severity]['cvss_temporal_score'] = round(
                         cvss_scores[t_temp_severity]['cvss_temporal_score'] + t_base_score, 2)
 
                 # CVE Per Item
@@ -855,18 +860,16 @@ def main(file):
     
     directory = ''
     if directory == '':
-        inputValid4 = False
-        while not inputValid4:
-            inputRaw4 = input('File Output Path in full path format e.g.: /Users/{username}/Desktop/:')
+            inputRaw4 = input('Report Names:')
+            inputRaw4 = inputRaw4.strip()
+            outputfile = inputRaw4
             inputRaw4 = inputRaw4.strip()
             directory = inputRaw4
-            inputValid4 = True
-    else:
-        print('%sPlease enter a file output path%s' % (fg(1), attr(0)))
+                
     REPORT_OUTPUT = "{0}".format(directory)
 
     WB = xlsxwriter.Workbook(
-        '{0}{1}.xlsx'.format(REPORT_OUTPUT, REPORT_NAME), {'strings_to_urls': False, 'constant_memory': True})
+        '{0}/{1}.xlsx'.format(REPORT_OUTPUT, REPORT_NAME), {'strings_to_urls': False, 'constant_memory': True})
     CENTER_BORDER_FORMAT = WB.add_format(
         {'bg_color': '#B0D351',
         'font_color': '#FFFFFF',
@@ -919,7 +922,17 @@ def main(file):
     generate_worksheets(WB, DARK_FORMAT, CENTER_BORDER_FORMAT, NUMBER_FORMAT)
     begin_parsing(file,NUMBER_FORMAT,WRAP_TEXT_FORMAT, WB, LIGHT_FORMAT,SM_DARK_FORMAT,BORDERLESS)
     
-    WB.close()
+    try:
+            WB.close()
+    except xlsxwriter.exceptions.FileCreateError:
+            while inputRaw4 == '':
+                    print("please enter a valid filepath") 
+                    inputRaw4 = input('Report Name:')
+                    inputRaw4 = inputRaw4.strip()
+            else:
+                inputRaw4 = inputRaw4.strip()
+                directory = inputRaw4
+                inputValid4 = True
 
-    print("\nReport has been saved as {0}{1}.xlsx".format(REPORT_OUTPUT,REPORT_NAME))
+    print("\nReport has been saved as {0}/{1}.xlsx".format(REPORT_OUTPUT,REPORT_NAME))
     return (WB,WRAP_TEXT_FORMAT, NUMBER_FORMAT, DARK_FORMAT, SM_DARK_FORMAT,LIGHT_FORMAT)

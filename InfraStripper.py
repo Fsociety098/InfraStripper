@@ -17,7 +17,7 @@ __author__ = "FSociety098"
 __copyright__ = "Copyright 2021, FSociety098"
 __credits__ = ["FSociety098"]
 __license__ = "GPL"
-__version__ = "0.0.1"
+__version__ = "0.5.0"
 __maintainer__ = "FSociety098"
 __status__ = "Development"
 
@@ -124,7 +124,7 @@ def fileSelect():
             if file.endswith('.nessus'):
                 print(file)
                 inputValid2 = True
-                askuser(options)
+                Generate_Spreadsheet.main(file)
             else:
                 print('%sNot a nessus file make sure the file extension is \'.nessus\'%s' % (
                     fg(1), attr(0)))
@@ -421,7 +421,6 @@ def stripservices():
 
 def askuser(options):
     global inputNo
-
     index = 0
     indexValidList = []
     print('%sSelect a option:\n%s' % (fg(2), attr(0)))
